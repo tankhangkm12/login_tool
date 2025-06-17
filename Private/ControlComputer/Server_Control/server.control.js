@@ -7,7 +7,8 @@ const fs = require('fs');
 
 const app = express();
 const port = 3000;
-const exePath = path.join(__dirname, '..', 'dist', 'server.exe');
+const exePath = path.join(__dirname, '..', 'dist','server.exe');
+console.log(exePath)
 
 app.use(express.static(__dirname));
 app.use(morgan('combined'));
