@@ -1,0 +1,6 @@
+tunnel: a6d57e8d-daa7-45fa-8636-1c094c6aa822
+credentials-file: C:\Users\Thanh Tan\.cloudflared\a6d57e8d-daa7-45fa-8636-1c094c6aa822.json
+ingress:
+  - hostname: tankhangkm12.thanhtan.xyz
+    service: http://localhost:3000
+  - service: http_status:404

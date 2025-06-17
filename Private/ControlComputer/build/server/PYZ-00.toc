@@ -1,5 +1,4 @@
-('D:\\foolishPlay\\New '
- 'folder\\login_tool\\Private\\ControlComputer\\build\\server\\PYZ-00.pyz',
+('D:\\foolishPlay\\Folder\\login_tool\\Private\\ControlComputer\\build\\server\\PYZ-00.pyz',
  [('PIL',
    'C:\\Users\\Thanh '
    'Tan\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PIL\\__init__.py',

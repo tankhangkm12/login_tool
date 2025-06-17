@@ -1,148 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🖥️ Control Panel</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🖥️ Control Panel</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #111;
-      color: #eee;
-      margin: 0;
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #111;
+        color: #eee;
+        margin: 0;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-
-    .button-container {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 100%;
-      max-width: 320px;
-    }
-
-    button {
-      padding: 12px;
-      font-size: 1rem;
-      background: #333;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    button:hover {
-      background: #555;
-    }
-
-    form {
-      margin-top: 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      max-width: 320px;
-    }
-
-    input {
-      padding: 10px;
-      border-radius: 6px;
-      border: none;
-      width: 100%;
-    }
-
-    .form-title {
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    img.screenshot {
-      margin-top: 20px;
-      max-width: 100%;
-      border: 1px solid #444;
-      border-radius: 8px;
-    }
-
-    @media (max-width: 480px) {
       h1 {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+
+      .button-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+        max-width: 320px;
       }
 
       button {
-        font-size: 0.95rem;
-        padding: 10px;
+        padding: 12px;
+        font-size: 1rem;
+        background: #333;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.2s;
       }
-    }
-  </style>
-</head>
-<body>
-  <h1>🖥️ Remote Control Panel</h1>
 
-  <div class="button-container">
-    <button onclick="sendCommand('/turnon')">▶️ Turn On</button>
-    <button onclick="sendCommand('/turnoff')">⏹️ Turn Off</button>
-    <button onclick="sendCommand('/screenshot')">📸 Screenshot</button>
-    <button onclick="sendCommand('/takephoto')">📷 Take Photo</button>
-    <button onclick="turnOnAfterDelay()">⏲️ Turn On After Delay</button>
-    <button onclick="sendCommand('/shutdown')">💣 Shutdown</button>
-  </div>
+      button:hover {
+        background: #555;
+      }
 
-  <img id="displayImg" class="screenshot" />
+      form {
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        max-width: 320px;
+      }
 
-  <form id="credentialsForm">
-    <div class="form-title">🔐 Update Credentials</div>
-    <input type="text" id="username" placeholder="New Username" />
-    <input type="password" id="password" placeholder="New Password" />
-    <button type="button" onclick="updateCredentials()">✅ Save</button>
-  </form>
+      input {
+        padding: 10px;
+        border-radius: 6px;
+        border: none;
+        width: 100%;
+      }
 
-  <script>
-    function sendCommand(endpoint) {
-      fetch(endpoint)
-        .then(res => res.json())
-        .then(data => {
-          alert(JSON.stringify(data));
-          if (data.image) {
-            document.getElementById('displayImg').src = data.image + '?t=' + Date.now();
-          }
+      .form-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      img.screenshot {
+        margin-top: 20px;
+        max-width: 100%;
+        border: 1px solid #444;
+        border-radius: 8px;
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        button {
+          font-size: 0.95rem;
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🖥️ Remote Control Panel</h1>
+
+    <div class="button-container">
+      <button onclick="sendCommand('/turnon')">▶️ Turn On</button>
+      <button onclick="sendCommand('/turnoff')">⏹️ Turn Off</button>
+      <button onclick="sendCommand('/screenshot')">📸 Screenshot</button>
+      <button onclick="sendCommand('/takephoto')">📷 Take Photo</button>
+      <button onclick="turnOnAfterDelay()">⏲️ Turn On After Delay</button>
+      <button onclick="sendCommand('/shutdown')">💣 Shutdown</button>
+    </div>
+
+    <img id="displayImg" class="screenshot" />
+
+    <form id="credentialsForm">
+      <div class="form-title">🔐 Update Credentials</div>
+      <input type="text" id="username" placeholder="New Username" />
+      <input type="password" id="password" placeholder="New Password" />
+      <button type="button" onclick="updateCredentials()">✅ Save</button>
+    </form>
+
+    <script>
+      function sendCommand(endpoint) {
+        fetch(endpoint)
+          .then((res) => res.json())
+          .then((data) => {
+            alert(JSON.stringify(data));
+            if (data.image) {
+              document.getElementById("displayImg").src =
+                data.image + "?t=" + Date.now();
+            }
+          })
+          .catch((err) => alert("Error: " + err));
+      }
+
+      function turnOnAfterDelay() {
+        const delay = prompt("Enter delay in minutes:");
+        if (!delay) return;
+        sendCommand(`/turnon/${delay}`);
+      }
+
+      function updateCredentials() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        fetch("/update-credentials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
         })
-        .catch(err => alert("Error: " + err));
-    }
-
-    function turnOnAfterDelay() {
-      const delay = prompt("Enter delay in minutes:");
-      if (!delay) return;
-      sendCommand(`/turnon/${delay}`);
-    }
-
-    function updateCredentials() {
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      fetch('/update-credentials', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      })
-      .then(res => res.json())
-      .then(data => alert(JSON.stringify(data)))
-      .catch(err => alert('Error: ' + err));
-    }
-  </script>
-</body>
+          .then((res) => res.json())
+          .then((data) => alert(JSON.stringify(data)))
+          .catch((err) => alert("Error: " + err));
+      }
+    </script>
+  </body>
 </html>

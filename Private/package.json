@@ -1,9 +1,19 @@
 {
+  "name": "control-setup",
+  "version": "1.0.0",
+  "description": "Setup utility to create and configure Cloudflared tunnel",
+  "bin": "setup.js",              
+  "scripts": {
+    "build": "pkg . --targets node18-win-x64 --output setup.exe"
+  },
   "dependencies": {
     "dotenv": "^16.5.0",
-    "fs": "^0.0.1-security",
     "js-yaml": "^4.1.0",
-    "os": "^0.1.2",
     "uuid": "^11.1.0"
+  },
+  "pkg": {
+    "assets": [
+      "ControlComputer/cloudflared-windows-amd64.exe"  
+    ]
   }
 }

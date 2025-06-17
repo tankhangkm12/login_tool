@@ -15,7 +15,8 @@ def load_credentials(json_path=None):
     try:
         if json_path is None:
             json_path = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else __file__),
-                                     "src", "accounts", "credentials.json")
+                                      "accounts", "credentials.json")
+            print(json_path)
         with open(json_path, "r", encoding="utf-8") as file:
             data = json.load(file)
             return data.get("username"), data.get("password")
@@ -37,7 +38,8 @@ root.attributes("-topmost", True)
 # ----------- Load background image -----------
 try:
     img_path = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else __file__),
-                            "src", "assets", "anime.background.jpg")
+                            "assets", "anime.background.jpg")
+    print(img_path)
     background_image = Image.open(img_path)
     background_image = background_image.resize((screen_width, screen_height))
     bg_photo = ImageTk.PhotoImage(background_image)
