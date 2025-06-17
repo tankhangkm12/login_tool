@@ -7,20 +7,28 @@ const fs = require('fs');
 
 const app = express();
 const port = 3000;
-const exePath = path.join(__dirname, '..', 'dist','server.exe');
-console.log(exePath)
 
-app.use(express.static(__dirname));
+// 🟩 Lấy thư mục thực tế chứa file thực thi .exe
+const baseDir = path.dirname(process.execPath);
+
+// 🟩 Dẫn đến file exe server cần điều khiển
+const exePath = path.join(baseDir,'..', 'dist', 'server.exe');
+
+// 🟩 Dùng thư mục thực để static và file HTML
+const publicDir = baseDir;
+const imagePath = path.join(publicDir, 'latest_screenshot.jpg');
+
+app.use(express.static(publicDir));
 app.use(morgan('combined'));
 
 let processRef = null;
 
-// Serve main page
+// === Serve trang chính
 app.get("/", (req, res) => {
-  return res.sendFile(path.join(__dirname, "index.html"));
+  return res.sendFile(path.join(publicDir, "index.html"));
 });
 
-// Start the EXE
+// === Bật EXE
 app.get('/turnon', (req, res) => {
   if (processRef) return res.json({ status: 'already running' });
 
@@ -35,7 +43,7 @@ app.get('/turnon', (req, res) => {
   return res.json({ status: 'started' });
 });
 
-// Kill the EXE
+// === Tắt EXE
 app.get('/turnoff', (req, res) => {
   if (!processRef) return res.json({ status: 'not running' });
 
@@ -52,7 +60,7 @@ app.get('/turnoff', (req, res) => {
   }
 });
 
-// Start with delay
+// === Bật EXE sau một khoảng thời gian
 app.get('/turnon/:time', (req, res) => {
   const minutes = parseFloat(req.params.time) || 0;
   const delayMs = minutes * 60 * 1000;
@@ -76,9 +84,8 @@ app.get('/turnon/:time', (req, res) => {
   return res.json({ status: `will start in ${minutes} minute(s)` });
 });
 
-// Screenshot API
+// === API chụp màn hình
 app.get('/screenshot', async (req, res) => {
-  const imagePath = path.join(__dirname, 'latest_screenshot.jpg');
   try {
     await screenshot({ filename: imagePath });
     res.json({ status: 'captured', image: '/latest_screenshot.jpg' });
@@ -88,7 +95,7 @@ app.get('/screenshot', async (req, res) => {
   }
 });
 
-// Auto-start app and listen
+// === Tự động bật EXE và chạy server
 app.listen(port, '0.0.0.0', () => {
   console.log(`Control server running on http://localhost:${port}`);
   if (!processRef) {
