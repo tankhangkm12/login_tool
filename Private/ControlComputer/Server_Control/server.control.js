@@ -8,24 +8,21 @@ const fs = require('fs');
 const app = express();
 const port = 3000;
 
-// 🟩 Lấy thư mục thực tế chứa file thực thi .exe
 const baseDir = path.dirname(process.execPath);
+const exePath = path.join(baseDir, '..', 'dist', 'server.exe');
+const photoExePath = path.join(baseDir, '..', 'dist', 'takephoto.exe');
+const imagePath = path.join(baseDir, 'latest_screenshot.jpg');
+const photoOutput = path.join(baseDir, 'webcam_photo.png');
+const configPath = path.join(baseDir, '..','accounts','credentials.json'); // 🟨 File chứa thông tin username/password
 
-// 🟩 Dẫn đến file exe server cần điều khiển
-const exePath = path.join(baseDir,'..', 'dist', 'server.exe');
-
-// 🟩 Dùng thư mục thực để static và file HTML
-const publicDir = baseDir;
-const imagePath = path.join(publicDir, 'latest_screenshot.jpg');
-
-app.use(express.static(publicDir));
+app.use(express.static(baseDir));
 app.use(morgan('combined'));
 
 let processRef = null;
 
-// === Serve trang chính
+// === Trang chính
 app.get("/", (req, res) => {
-  return res.sendFile(path.join(publicDir, "index.html"));
+  return res.sendFile(path.join(baseDir, "index.html"));
 });
 
 // === Bật EXE
@@ -60,7 +57,7 @@ app.get('/turnoff', (req, res) => {
   }
 });
 
-// === Bật EXE sau một khoảng thời gian
+// === Bật EXE sau vài phút
 app.get('/turnon/:time', (req, res) => {
   const minutes = parseFloat(req.params.time) || 0;
   const delayMs = minutes * 60 * 1000;
@@ -84,7 +81,7 @@ app.get('/turnon/:time', (req, res) => {
   return res.json({ status: `will start in ${minutes} minute(s)` });
 });
 
-// === API chụp màn hình
+// === Chụp màn hình
 app.get('/screenshot', async (req, res) => {
   try {
     await screenshot({ filename: imagePath });
@@ -95,16 +92,53 @@ app.get('/screenshot', async (req, res) => {
   }
 });
 
-// === Tự động bật EXE và chạy server
+// === Chụp webcam
+app.get('/takephoto', (req, res) => {
+  exec(`"${photoExePath}"`, (error, stdout, stderr) => {
+    if (error) {
+      console.error("Take photo error:", error.message);
+      return res.status(500).json({ error: 'Failed to take photo' });
+    }
+    if (stderr) console.error("takephoto.exe stderr:", stderr);
+
+    if (fs.existsSync(photoOutput)) {
+      res.json({ status: 'captured', image: '/webcam_photo.png' });
+    } else {
+      res.status(500).json({ error: 'Photo not found after capture' });
+    }
+  });
+});
+
+// === 🟦 Cập nhật username + password
+app.get('/update-credentials', (req, res) => {
+  const { username, password } = req.query;
+
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Missing username or password' });
+  }
+
+  const data = { username, password };
+
+  try {
+    fs.writeFileSync(configPath, JSON.stringify(data, null, 2), 'utf-8');
+    console.log("✅ Updated credentials:", data);
+    res.json({ status: 'Credentials updated' });
+  } catch (err) {
+    console.error("❌ Error writing credentials:", err.message);
+    res.status(500).json({ error: 'Failed to update credentials' });
+  }
+});
+
+app.get('/shutdown', (req, res) => {
+  exec('shutdown /s /t 0', (error, stdout, stderr) => {
+    if (error) {
+      console.error('Shutdown error:', error.message);
+      return res.status(500).json({ error: 'Failed to shutdown' });
+    }
+    res.json({ status: 'Shutting down...' });
+  });
+});
+// === Khởi chạy server
 app.listen(port, '0.0.0.0', () => {
   console.log(`Control server running on http://localhost:${port}`);
-  if (!processRef) {
-    processRef = spawn(exePath, [], { detached: true, stdio: 'ignore' });
-    processRef.unref();
-    processRef.on('exit', (code) => {
-      console.log(`App exited with code ${code}`);
-      processRef = null;
-    });
-    console.log("EXE auto-started with control server.");
-  }
 });
