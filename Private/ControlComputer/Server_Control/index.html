@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phone Remote Control</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+    }
+
+    .button-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    button {
+      width: 90%;
+      height: 80px;
+      font-size: 24px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    #onBtn { background-color: #4CAF50; color: white; }
+    #offBtn { background-color: #f44336; color: white; }
+    #setTimeBtn { background-color: #2196F3; color: white; }
+    #screenshotBtn { background-color: #FF9800; color: white; }
+
+    #timeInput {
+      width: 90%;
+      height: 60px;
+      font-size: 22px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    #screenshotImg {
+      margin-top: 30px;
+      border: 3px solid #555;
+      max-width: 95%;
+      border-radius: 8px;
+    }
+
+    #status {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📱 Phone Remote Control</h1>
+
+  <div class="button-box">
+    <button id="onBtn">🔌 Turn On</button>
+    <button id="offBtn">🛑 Turn Off</button>
+    <input type="text" id="timeInput" placeholder="Enter time (minutes)">
+    <button id="setTimeBtn">⏰ Set Time</button>
+    <button id="screenshotBtn">📸 Take Screenshot</button>
+    <img id="screenshotImg" src="" alt="Screenshot will appear here">
+  </div>
+
+  <p id="status"></p>
+
+  <script>
+    const baseURL = window.location.origin;
+    const status = document.getElementById('status');
+
+    document.getElementById('onBtn').onclick = async () => {
+      status.textContent = "Turning on...";
+      try {
+        const res = await fetch(`${baseURL}/turnon`);
+        const data = await res.json();
+        status.textContent = `✅ ${data.status}`;
+      } catch (err) {
+        status.textContent = `❌ ${err.message}`;
+      }
+    };
+
+    document.getElementById('offBtn').onclick = async () => {
+      status.textContent = "Turning off...";
+      try {
+        const res = await fetch(`${baseURL}/turnoff`);
+        const data = await res.json();
+        status.textContent = `✅ ${data.status}`;
+      } catch (err) {
+        status.textContent = `❌ ${err.message}`;
+      }
+    };
+
+    document.getElementById('setTimeBtn').onclick = async () => {
+      const time = document.getElementById('timeInput').value.trim();
+      if (!time) return status.textContent = "⏰ Please enter a time";
+      status.textContent = `Scheduling to start in ${time} minute(s)...`;
+      try {
+        const res = await fetch(`${baseURL}/turnon/${time}`);
+        const data = await res.text();
+        status.textContent = `✅ ${data}`;
+      } catch (err) {
+        status.textContent = `❌ ${err.message}`;
+      }
+    };
+
+    document.getElementById('screenshotBtn').onclick = async () => {
+      status.textContent = "📸 Taking screenshot...";
+      try {
+        const res = await fetch(`${baseURL}/screenshot`);
+        const data = await res.json();
+        if (data.image) {
+          document.getElementById('screenshotImg').src = `${baseURL}${data.image}?t=` + new Date().getTime();
+          status.textContent = "✅ Screenshot updated.";
+        } else {
+          status.textContent = "⚠️ Could not capture image.";
+        }
+      } catch (err) {
+        status.textContent = `❌ Screenshot error: ${err.message}`;
+      }
+    };
+  </script>
+</body>
+</html>
