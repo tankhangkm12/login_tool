@@ -12,10 +12,12 @@ const tunnelName = `control_computer_tunnel_${SUBDOMAIN.slice(0, 8)}`;
 const configDir = path.join(os.homedir(), '.cloudflared');
 const exeDir = __dirname+'\\ControlComputer';
 const configPath = path.join(exeDir, 'config.yml');
+const cloudflaredPath = path.join(__dirname, 'ControlComputer', 'cloudflared-windows-amd64.exe');
+console.log(cloudflaredPath)
 
-execSync(`cloudflared tunnel create ${tunnelName}`, { stdio: 'inherit' });
+execSync(`${cloudflaredPath} tunnel create ${tunnelName}`, { stdio: 'inherit' });
 
-const tunnelListJson = execSync('cloudflared tunnel list --output json').toString();
+const tunnelListJson = execSync(`${cloudflaredPath} tunnel list --output json`).toString();
 const tunnels = JSON.parse(tunnelListJson);
 const tunnel = tunnels.find(t => t.name === tunnelName);
 
