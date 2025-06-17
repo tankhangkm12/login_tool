@@ -6,23 +6,26 @@ import os
 import json
 
 # Load credentials from JSON
-def load_credentials(json_path="D:\\foolishPlay\\Private\\ControlComputer\\credentials.json"):
+def resource_path(relative_path=""):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
+# Load credentials from JSON
+def load_credentials(json_path=None):
     try:
+        if json_path is None:
+            json_path = resource_path("ControlComputer\\accounts\\credentials.json")  # default path
+            print(json_path)
         with open(json_path, "r") as file:
             data = json.load(file)
-            print(data['username'], data['password'])
             return data.get("username"), data.get("password")
     except Exception as e:
         print(f"❌ Failed to load credentials: {e}")
         sys.exit(1)
 
 CORRECT_USERNAME, CORRECT_PASSWORD = load_credentials()
-
-def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
-    if hasattr(sys, '_MEIPASS'):
-        return os.path.join(sys._MEIPASS, relative_path)
-    return os.path.join(os.path.abspath("."), relative_path)
 
 # Create window
 root = tk.Tk()
